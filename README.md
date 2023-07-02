@@ -28,9 +28,8 @@
 * Any software application that needs backend DB. (Dynamic web-apps/Mobile/Desktop Apps)
 
 ### Screenshots
-![](/Assets/screenshots/index_ss.JPG)
-![](/Assets/screenshots/create_ss.JPG)
-![](/Assets/screenshots/retrieve_ss.JPG)
-![](/Assets/screenshots/update_ss.JPG)
-![](/Assets/screenshots/delete_ss.JPG)
-![](/Assets/screenshots/db_ss.JPG)
+![](Screenshots/Screenshot(1).png)
+![](Screenshots/Screenshot(2).png)
+![](Screenshots/Screenshot(3).png)
+![](Screenshots/Screenshot(4).png)
+
