@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html lang="en">
+  <head>
+    <title>Micro Project Work</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://login2explore.com/jpdb/resources/js/0.0.3/jpdb-commons.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Student Enrollment Form (Micro Project Work)</h2>
+      <form id="EmpForm" method="post">
+        <div class="form-group">
+          <span
+            ><label for="EmpId">Employee Id:</label> <label id="EmpIdMsg"> </label
+          ></span>
+
+          <input
+            type="text"
+            class="form-control"
+            onchange="getStu()"
+            name="EmpId"
+            id="EmpId"
+            placeholder="Enter Employee Id"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="EmpName">Employee Name:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="EmpName"
+            placeholder="Enter Name"
+            name="EmpName"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="Empsal">Basic Salary:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="Empsal"
+            placeholder="Enter Salary"
+            name="Empsal"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="Emphra">HRA:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="Emphra"
+            placeholder="Enter HRA"
+            name="Emphra"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="Empda">DA:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="Empda"
+            placeholder="Enter DA"
+            name="Empda"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="Empdeduction">Deduction:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="Empdeduction"
+            placeholder="Enter Deduction"
+            name="Empdeduction"
+          />
+        </div>
+
+        <input
+          type="button"
+          class="btn btn-primary"
+          id="empSave"
+          value="Save"
+          onclick="saveData();"
+        />
+        <input
+          type="button"
+          class="btn btn-primary"
+          id="empChange"
+          value="Change"
+          onclick="changeData();"
+        />
+        <input
+          type="button"
+          class="btn btn-primary"
+          id="empReset"
+          value="Reset"
+          onClick="resetForm()"
+        />
+        <!-- window.location.reload() -->
+      </form>
+    </div>
+
+    <script>
+      function validateAndGetFormData() {
+        var EmpIdVar = $("#EmpId").val();
+        if (EmpIdVar === "") {
+          alert("Employee ID-No Required Value");
+          $("#EmpId").focus();
+          return "";
+        }
+        var EmpNameVar = $("#EmpName").val();
+        if (EmpNameVar === "") {
+          alert("Employee Name is Required Value");
+          $("#EmpName").focus();
+          return "";
+        }
+        var EmpsalVar = $("#Empsal").val();
+        if (EmpsalVar === "") {
+          alert("Employee Salary is Required Value");
+          $("#Empsal").focus();
+          return "";
+        }
+
+        var EmphraVar = $("#Emphra").val();
+        if (EmphraVar === "") {
+          alert("Employee HRA is Required Value");
+          $("Emphra").focus();
+          return "";
+        }
+
+        var EmpdaVar = $("#Empda").val();
+        if (EmpdaVar === "") {
+          alert("Employee DA is Required Value");
+          $("#Empda").focus();
+          return "";
+        }
+
+        var EmpdeductionVar = $("Empdeduction").val();
+        if (Empdeduction === "") {
+          alert("Employee deduction is Required Value");
+          $("Empdeduction").focus();
+          return "";
+        }
+
+        var jsonStrObj = {
+          EmpId: EmpIdVar,
+          EmpName: EmpNameVar,
+          Empsal: EmpsalVar,
+          Emphra: EmphraVar,
+          Empda: EmpdaVar,
+          Empdeduction: EmpdeductionVar,
+        };
+        return JSON.stringify(jsonStrObj);
+      }
+
+      function getEmpIdASJsonObj() {
+        var EmpId = $("#EmpId").val();
+        var jsonStr = {
+          id: EmpId,
+        };
+        return JSON.stringify(jsonStr);
+      }
+
+      function getStu() {
+        varEmpIdJsonObj = getEmpIdASJsonObj();
+        var getRequest = createGET_BY_KEYRequest(
+          connToken,
+          EmpDBName,
+          EmpRelationName,
+          EmpIdJsonObj
+        );
+        jQuery.ajaxSetup({ async: false });
+        var resJsonObj = executeCommandAtGivenBaseUrl(
+          getRequest,
+          jpdbBaseURL,
+          jpdbURL
+        );
+        jQuery.ajaxSetup({ async: true });
+        if (resJsonObj.status === 400) {
+          $("#save").prop("disabled", flase);
+          $("#reset").prop("disabled", false);
+          $("#EmpName").focus();
+        } else if (resJsonObj.status === 200) {
+          $("#EmpId").prop("disabled", true);
+          fillData(resJsonObj);
+          $("#change").prop("disabled", false);
+          $("#reset").prop("disabled", false);
+          $("#empName").focus();
+        }
+      }
+
+      function resetForm() {
+        $("#EmpId").val("");
+        $("#EmpName").val("");
+        $("#Empsal").val("");
+        $("#Emphra").val("");
+        $("#Empda").val("");
+        $("#Empdeduction").val("");
+        $("#EmpId").focus();
+      }
+
+      function changeData() {
+        $("#change").prop("disabled", true);
+        jsonChg = validateData();
+        var updateRequest = createUPDATERecordRequest(
+          ConnToken,
+          jsonChg,
+          EmpDBName,
+          EmpRelationName,
+          localStorage.getItem("recno")
+        );
+        jQuery.ajaxSetup({ async: falses });
+        var resJsonObj = executeCommandAtGivenBaseUrl(
+          updateRequest.jpdBaseURL,
+          jpdbIML
+        );
+        jQuery.ajaxSetup({ async: true });
+        console.log(resJsonObj);
+        resetForm();
+        $("#EmpId").focus();
+      }
+
+      function saveData() {
+        // validate form data
+
+        // create JPDB request string - token , dbname , relation name ...
+
+        // Execute this request
+
+        //Reset the form data
+
+        var jsonStr = validateAndGetFormData();
+        if (jsonStr === "") {
+          return;
+        }
+        var putReqStr = createPUTRequest(
+          "90933063|-31949323835251464|90951472",
+          jsonStr,
+          "Employee-DB",
+          "Employee-TABLE"
+        );
+
+        alert(putReqStr);
+
+        jQuery.ajaxSetup({ async: false });
+        var resultObj = executeCommandAtGivenBaseUrl(
+          putReqStr,
+          " http://api.login2explore.com:5577",
+          "/api/iml"
+        );
+        jQuery.ajaxSetup({ async: true });
+
+        alert(JSON.stringify(resultObj));
+        resetForm();
+      }
+    </script>
+  </body>
+</html>
